@@ -1,4 +1,4 @@
-# Execution phase
+# Agent Execution
 The second stage is the execution phase.
 The iterative process is invoked via a simple bash script (using `claude` and `10` iterations):
 
@@ -37,59 +37,6 @@ The iterative process is invoked via a simple bash script (using `claude` and `1
 > **Assistant** &ensp; Now update progress.txt:
 > 
 > **Assistant** &ensp; Now commit everything:
-> 
-> **Assistant** &ensp; **M-001 complete.** Now checking the situation: M-001 has `passes: true`, `is_checkpoint: true`, `checkpoint_approved: false`, and no `revisions` field. This is **Case B** — checkpoint awaiting human review.
-> 
-> Let me write the checkpoint summary to progress.txt.
-> 
-> **Assistant** &ensp; <promise>NEEDS_REVIEW</promise>
-> 
-> **M-001: Paper specification** is complete and awaiting your review.
-> 
-> **What was done:**
-> - Downloaded arXiv:1902.08570 PDF to `source/`
-> - Extracted full methodology spec to `source/spec.md` covering all 10 sections:
-  > 1. Task (binary top tagging)
-  > 2. Dataset (Zenodo 2603256, 1.2M/400k/400k splits)
-  > 3. Input features (7 per-particle variables + spatial coords)
-  > 4. Model architecture (ParticleNet-Lite: 2 EdgeConv blocks, k=7, channels (32,32,32)/(64,64,64), mean aggregation, shortcut connections, FC(128)→dropout(0.1)→FC(2)→softmax)
-  > 5. Training (AdamW wd=1e-4, one-cycle LR 5e-4→5e-3, 20 epochs, batch 1024)
-  > 6. Evaluation (accuracy, AUC, 1/ε_B at ε_S=30% and 50%)
-  > 7. Uncertainty (9 seeds, median-accuracy run ± std)
-  > 8. Reference results (accuracy=0.937, AUC=0.9844, 1/ε_B@50%=325±5, 1/ε_B@30%=1262±49)
-> - Wrote 53 tests verifying spec completeness — all pass
-> 
-> **To verify:**
-> ```bash
-> source setup.sh
-> pytest tests/test_spec.py -v
-> cat source/spec.md
-> ```
-> 
-> **Next steps:** Set `"checkpoint_approved": true` for M-001 in `project.json` to proceed to M-002 (Dataset download), or use `/chat` to request revisions.
-
-
-
-The agent stops at predefined checkpoints and asks for human revision and approval.
-For example after `Milestone M-005`:
-> **Assistant** &ensp; Milestone M-005 is complete. This is a checkpoint — signaling for human review.
-> 
-> <promise>NEEDS_REVIEW</promise>
-> 
-> **M-005: Training pipeline** is complete and awaiting your review.
-> 
-> **What was built:**
-> - `src/models/lightning_module.py` — `ParticleNetLitModule` wrapping ParticleNet-Lite with the paper's exact training recipe (AdamW wd=1e-4, OneCycleLR max_lr=5e-3, 20 epochs, batch 1024, cross-entropy loss)
-> - `src/tasks.py:TrainModel` — law task with `--version`, `--seed`, `--n-events`, `--max-epochs` parameters, deterministic seeding, GPU/CPU fallback, ModelCheckpoint saving best val_accuracy
-> 
-> **Verification:** All 120 tests pass (110 non-slow + 10 training-specific including smoke training, checkpoint saving, LR schedule validation, and deterministic seeding).
-> 
-> **To verify yourself:**
-> ```bash
-> source setup.sh
-> pytest tests/test_training.py -v               # 10 training tests
-> law run TrainModel --version dev --n-events 1000 --max-epochs 2 --seed 42 --local-scheduler  # smoke test
-> ```
 
 ## Full Transcript (Run 1)
 > ### Session 3 — 2026-04-12 18:01
