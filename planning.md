@@ -17,6 +17,20 @@ The planning phase starts with the initial prompt that is given to the SHARP age
 After the planning session has ended, we can transform the plan into a project.json via the `\setup` skill:
 > Load the setup skill and convert analysis-plan.md to project.json
 
+An exemplary `project.json` contains:
+
+> | ID | Title | Subagents | Checkpoint |
+> |----|-------|-----------|:----------:|
+> | M-001 | Paper specification | paper-analyst | yes |
+> | M-002 | Dataset download | coder, tester | |
+> | M-003 | Data loading and feature exploration | coder, tester | yes |
+> | M-004 | ParticleNet-Lite model implementation | coder, tester | |
+> | M-005 | Training pipeline | coder, tester | yes |
+> | M-006 | Evaluation pipeline | coder, tester | |
+> | M-007 | Smoke test end-to-end validation | coder, tester | yes |
+> | M-008 | Multi-seed uncertainty estimation (9 seeds) | coder, statistician, tester | yes |
+> | M-009 | Full result plots and final comparison | coder, tester | yes |
+
 We are now all set to invoke the execution phase!
 
 ## Full transcript (Run 1)
